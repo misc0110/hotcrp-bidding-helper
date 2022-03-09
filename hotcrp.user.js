@@ -102,6 +102,7 @@ function updateKeywords() {
         var hn_c = false;
         var aid = $(a).parent().parent().attr("data-pid")
         var topic_score = parseInt($(a).parent().parent().prev("tr").find(".pl_topicscore").text());
+        if(isNaN(topic_score)) topic_score = 0;
         var was_adjusted = false;
         var txt = all_abstracts[aid];
         for(var i = 0; i < kws.length; i++) {
@@ -145,7 +146,11 @@ function updateKeywords() {
             interesting += "<a href='#p" + sc[0] + "'>#" + sc[0] + "</a> ";
         } else break;
     }
-    $("#suggest_list").html(interesting);
+    if(interesting == "") {
+        $("#suggest_list").html("<i>No paper matches your keywords</i>");
+    } else {
+        $("#suggest_list").html(interesting);
+    }
 
 
 }
