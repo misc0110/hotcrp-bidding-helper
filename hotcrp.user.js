@@ -114,7 +114,7 @@ function updateKeywords() {
                     h++;
                 }
             }
-            txt = txt.replace(kw_re[i], "<span style='background-color: yellow; font-weight: bold;'>" + kws[i].trim() + "</span>");
+            txt = txt.replace(kw_re[i], "<span style='background-color: yellow; font-weight: bold;'>$&</span>");
         }
         for(i = 0; i < nos.length; i++) {
             if(txt.match(nos[i])) {
@@ -125,7 +125,7 @@ function updateKeywords() {
                     hn++;
                 }
             }
-            txt = txt.replace(no_re[i], "<span style='background-color: red; font-weight: bold; color: white;'>" + nos[i].trim() + "</span>");
+            txt = txt.replace(no_re[i], "<span style='background-color: red; font-weight: bold; color: white;'>$&</span>");
         }
         if(was_adjusted) {
             a.innerHTML = txt;
