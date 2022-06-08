@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HotCRP Bidding Stats
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Little helper for paper bidding
 // @author       Michael Schwarz
 // @match        https://*.hotcrp.com/reviewprefs*
@@ -12,6 +12,7 @@
 /* eslint-env jquery */
 
 var all_abstracts = {};
+var threshold;
 
 function countBid() {
     var count = 0;
@@ -80,7 +81,8 @@ function updateKeywords() {
     var abstracts = $(".pl_abstract");
     GM_setValue("keywords", $("#keyword_list").val());
     GM_setValue("nogo", $("#nogo_list").val());
-
+    threshold = parseInt($("#thresh").val());
+    GM_setValue("threshold", threshold);
     var adjusted_topic_score = [];
 
     var kw_re = [];
@@ -142,7 +144,7 @@ function updateKeywords() {
 
     var interesting = "";
     for(let sc of adjusted_topic_score) {
-        if(sc[1] >= 10) {
+        if(sc[1] >= threshold) {
             interesting += "<a href='#p" + sc[0] + "'>#" + sc[0] + "</a> ";
         } else break;
     }
@@ -182,13 +184,17 @@ function enableSuggest() {
                           "<button id='btnapplynegative'>Apply negative scores</button></div> &nbsp; &nbsp; <br />" +
                           "<table><tr><td>Highlight (comma-separated list):</td><td><input type='text' id='keyword_list' style='width: 95%'></td><td><span id='keyword_matches'></span></td></tr>" +
                           "<tr><td>Red flags (comma-separated list):</td><td><input type='text' id='nogo_list'  style='width: 95%'></td><td><span id='nogo_matches'></span></td></tr>" +
-                          "<tr><td>Suggestions:</td><td colspan=2><span id='suggest_list'></span></td></tr></table>");
+                          "<tr><td>Suggestions:</td><td colspan=2><span id='suggest_list'></span> (Threshold: <input type='number' id='thresh' />)</td></tr></table>");
     updateBid();
     $(".revpref").on("blur", updateBid);
     saveAbstracts();
 
     $("#keyword_list").on("blur", updateKeywords);
     $("#nogo_list").on("blur", updateKeywords);
+    threshold = GM_getValue("threshold", 10);
+    $("#thresh").val(threshold);
+    $("#thresh").on("blur", updateKeywords);
+
     var kw = GM_getValue("keywords", "");
     if(kw != "") {
         $("#keyword_list").val(kw);
@@ -204,6 +210,7 @@ function enableSuggest() {
         $("#suggest_list").html("<button id='suggestenable'>Calculate</button>");
     }
     $("#suggestenable").on("click", enableSuggest);
+
 
     var conflicts = disableConflicts();
     $("#conflictcnt").text(conflicts);
