@@ -4,7 +4,7 @@
 // @version      0.2
 // @description  Little helper for paper bidding
 // @author       Michael Schwarz
-// @match        https://*.hotcrp.com/reviewprefs*
+// @match        https://*.hotcrp.com/*/reviewprefs*
 // @icon         https://hotcrp.com/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -13,6 +13,8 @@
 
 var all_abstracts = {};
 var threshold;
+var suggestions = [];
+var suggest_current = -1;
 
 function countBid() {
     var count = 0;
@@ -143,19 +145,46 @@ function updateKeywords() {
     adjusted_topic_score.sort(function(first, second) { return second[1] - first[1]; });
 
     var interesting = "";
+    suggestions = [];
     for(let sc of adjusted_topic_score) {
         if(sc[1] >= threshold) {
-            interesting += "<a href='#p" + sc[0] + "'>#" + sc[0] + "</a> ";
+            interesting += "<a href='#p" + sc[0] + "' id='sunavid" + sc[0] + "'>#" + sc[0] + "</a> ";
+            suggestions.push(sc[0]);
         } else break;
     }
     if(interesting == "") {
         $("#suggest_list").html("<i>No paper matches your keywords</i>");
     } else {
         $("#suggest_list").html(interesting);
+        for(let s of suggestions) {
+            $("#sunavid" + s).click(function(e) { gotoSuggest(s);});
+        }
+        $("#sugnav").show();
     }
 
 
 }
+
+function gotoSuggest(pid) {
+    suggest_current = pid;
+    $("#sugnavcur").text(pid);
+    window.location.href = "#p" + pid;
+}
+
+function suggestNext() {
+    var idx = suggestions.indexOf(suggest_current);
+    if(idx < suggestions.length) {
+        gotoSuggest(suggestions[idx + 1]);
+    }
+}
+
+function suggestPrev() {
+    var idx = suggestions.indexOf(suggest_current);
+    if(idx > 0) {
+        gotoSuggest(suggestions[idx - 1]);
+    }
+}
+
 
 function saveAbstracts() {
     var abstracts = $(".pl_abstract");
@@ -219,4 +248,7 @@ function enableSuggest() {
         applyNegative();
     });
     $("#posscores").text(positiveTopicScores());
+    $("body").append("<div id='sugnav' style='position: fixed; top: 0px; left: 0px; background-color: #fefefe; display: none;'><a id='sugnavprev'>&#129092;</a> <span id='sugnavcur' style='width: 8em;'>--</span> <a id='sugnavnext'>&#129094;</a></div>");
+    $("#sugnavprev").click(suggestPrev);
+    $("#sugnavnext").click(suggestNext);
 })();
