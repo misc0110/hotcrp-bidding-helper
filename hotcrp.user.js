@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HotCRP Bidding Stats
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Little helper for paper bidding
 // @author       Michael Schwarz
 // @match        https://*.hotcrp.com/*/reviewprefs*
@@ -249,7 +249,7 @@ function enableSuggest() {
         applyNegative();
     });
     $("#posscores").text(positiveTopicScores());
-    $("body").append("<div id='sugnav' style='position: fixed; top: 0px; left: 0px; background-color: #fefefe; display: none;'><a id='sugnavprev'>&#129092;</a> <span id='sugnavcur' style='width: 8em;'>--</span> <a id='sugnavnext'>&#129094;</a></div>");
+    $("body").append("<div id='sugnav' style='position: fixed; top: 0px; left: 0px; background-color: #fefefe; display: none;'><a id='sugnavprev' style='cursor: pointer;'>&#129092;</a> <span id='sugnavcur' style='display: inline-block; width: 3em; text-align: center;'>--</span> <a id='sugnavnext' style='cursor: pointer;'>&#129094;</a></div>");
     $("#sugnavprev").click(suggestPrev);
     $("#sugnavnext").click(suggestNext);
 })();
