@@ -5,6 +5,7 @@
 // @description  Little helper for paper bidding
 // @author       Michael Schwarz
 // @match        https://*.hotcrp.com/*/reviewprefs*
+// @match        https://*.hotcrp.com/reviewprefs*
 // @icon         https://hotcrp.com/favicon.ico
 // @grant        GM_setValue
 // @grant        GM_getValue
